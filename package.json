@@ -1,0 +1,21 @@
+{
+  "name": "prediction",
+  "version": "1.0.0",
+  "description": "football betting prediction site",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "knex": "^0.19.3",
+    "nodemon": "^1.19.2",
+    "pg": "^7.12.1",
+    "request-promise-native": "^1.0.7",
+    "rg": "0.0.2"
+  }
+}
