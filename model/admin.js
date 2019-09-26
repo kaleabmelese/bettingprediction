@@ -5,7 +5,45 @@ const bcrypt = require("bcrypt"); // bcrypt will encrypt passwords to be saved i
 const crypto = require("crypto"); // built-in encryption node module
 const stuff = require("./stuff");
 
-const express = require("express");
+const signup = (request, response) => {
+  const user = request.body;
+  stuff
+    .hashPassword(user.password)
+    .then(hashedPassword => {
+      delete user.password;
+      user.password_digest = hashedPassword;
+    })
+    .then(() => stuff.createToken())
+    .then(token => (user.token = token))
+    .then(() => stuff.createUser(user))
+    .then(user => {
+      delete user.password_digest;
+      response.status(201).json({ user });
+    })
+    .catch(err => console.error(err));
+};
+
+const signin = (request, response) => {
+  const userReq = request.body;
+  let user;
+
+  stuff
+    .findUser(userReq)
+    .then(foundUser => {
+      user = foundUser;
+      return stuff.checkPassword(userReq.password, foundUser);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    .then(() => stuff.createToken())
+    .then(token => stuff.updateUserToken(token, user))
+    .then(() => {
+      delete user.password_digest;
+      response.status(200).json(user);
+    })
+    .catch(err => console.error(err));
+};
 
 const insertprediction = (request, response) => {
   const pbody = request.body;
@@ -54,6 +92,8 @@ const deleteprediction = (reques, response) => {
 };
 
 module.exports = {
+  signin,
+  signup,
   insertprediction,
   insertfreetip,
   deleteprediction
