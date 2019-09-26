@@ -8,28 +8,31 @@ const admin = require("../../model/admin");
 //   // var getdata=await
 // });
 
-router.get("/", (req, res) => {
-  db.fetch().then(result => {
-    res.status(200).json(result);
-    console.log(JSON.stringify(result));
-  });
+// router.get("/", (req, res) => {
+//   db.fetch().then(result => {
+//     res.status(200).json(result);
+//     console.log(JSON.stringify(result));
+//   });
 
-  // res.status(500).json(db.fetch());
-});
+//   // res.status(500).json(db.fetch());
+// });
 
-router.post("/insert/client", (req, res) => {
-  const fname = req.body.fname;
-  const lname = req.body.lname;
-  // const tablename = req.params.tablename;
-  db.insert(fname, lname).then(result => {
-    console.log(JSON.stringify(result));
-    res.status(200).json(result);
-  });
-});
+// router.post("/insert/client", (req, res) => {
+//   const fname = req.body.fname;
+//   const lname = req.body.lname;
+//   // const tablename = req.params.tablename;
+//   db.insert(fname, lname).then(result => {
+//     console.log(JSON.stringify(result));
+//     res.status(200).json(result);
+//   });
+// });
 
+router.get("/", User.homepage);
 router.post("/signup", User.signup);
 router.post("/signin", User.signin);
-router.post("/saveprediction", admin.insert);
+router.post("/saveprediction", admin.insertprediction);
+router.post("/savefreetip", admin.insertfreetip);
 router.get("/getprediction", User.getpredictions);
+router.post("/deleteprediction", admin.deleteprediction);
 
 module.exports = router;

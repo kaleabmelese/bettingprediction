@@ -7,23 +7,54 @@ const stuff = require("./stuff");
 
 const express = require("express");
 
-const insert = (request, response) => {
+const insertprediction = (request, response) => {
   const pbody = request.body;
-  stuff.savePrediction(pbody)
+  stuff
+    .savePrediction(pbody)
     .then(result => {
       if (result.data.length === 0) {
-        response.status(400).json(result)
+        response.status(400).json(result);
       } else {
         response.status(200).json(result);
       }
-
     })
     .catch(error => {
-      console.log(error)
-      response.status(500).json(JSON.parse(error.message))
+      console.log(error);
+      response.status(500).json(JSON.parse(error.message));
+    });
+};
+
+const insertfreetip = (request, response) => {
+  const pbody = request.body;
+  stuff
+    .savefreetip(pbody)
+    .then(result => {
+      if (result.data.length === 0) {
+        response.status(400).json(result);
+      } else {
+        response.status(200).json(result);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      response.status(500).json(JSON.parse(error.message));
+    });
+};
+
+const deleteprediction = (reques, response) => {
+  stuff
+    .deleteprediction()
+    .then(result => {
+      response.status(200).json(result);
+    })
+    .catch(err => {
+      console.log(err);
+      response.status(500).json(JSON.parse(error.message));
     });
 };
 
 module.exports = {
-  insert
+  insertprediction,
+  insertfreetip,
+  deleteprediction
 };

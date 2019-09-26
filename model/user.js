@@ -33,6 +33,9 @@ const signin = (request, response) => {
       user = foundUser;
       return stuff.checkPassword(userReq.password, foundUser);
     })
+    .catch(err => {
+      console.log(err);
+    })
     .then(() => stuff.createToken())
     .then(token => stuff.updateUserToken(token, user))
     .then(() => {
@@ -43,18 +46,36 @@ const signin = (request, response) => {
 };
 const getpredictions = (request, response) => {
   const pbody = request.body;
-  stuff.fetchprediction(pbody).then(result => {
-    if (result.data.length === 0) {
-      response.status(400).json(result);
-    } else {
-      console.log(result.data);
+  stuff
+    .fetchprediction(pbody)
+    .then(result => {
+      if (result.data.length === 0) {
+        response.status(400).json(result);
+      } else {
+        console.log(result.data);
+        response.status(200).json(result.data);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
+const homepage = (request, response) => {
+  stuff
+    .fetchfreetip()
+    .then(result => {
       response.status(200).json(result.data);
-    }
-  });
+    })
+    .catch(err => {
+      console.log(err);
+      // response.status(500).json(JSON.parse(err.message));
+    });
 };
 
 module.exports = {
   signup,
   signin,
-  getpredictions
+  getpredictions,
+  homepage
 };

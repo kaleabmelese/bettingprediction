@@ -75,15 +75,13 @@ const stuff = (module.exports = {
           input_data_size: 0,
           data: []
         });
-      } else if (fixtures.length <= 50) {
+      } else if (fixtures.length <= 5) {
         var query = `INSERT INTO predictions(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
         fixtures.forEach(element => {
-          query += `('${pbody.league}','${element.team1}','${element.team2}','${
-            element.tip
-          }',
-                  '${element.matchtime}','${new Date()
-            .toISOString()
-            .slice(0, 10)}'),`;
+          query += `('${pbody.league}','${element.team1}','${element.team2}',
+          '${element.tip}','${
+            element.matchtime
+          }','${new Date().toISOString().slice(0, 10)}'),`;
         }, query);
         query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
         database
@@ -114,20 +112,112 @@ const stuff = (module.exports = {
     const matchtime = pbody.matchtime;
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM predictions WHERE matchtime='${matchtime}'`;
-      database.raw(query).then(result => {
-        resolve({
-          status: "NO_ERROR",
-          message: "Request correct",
-          data: result.rows
+      database
+        .raw(query)
+        .then(result => {
+          resolve({
+            status: "NO_ERROR",
+            message: "Request correct",
+            data: result.rows
+          });
+        })
+        .catch(err => {
+          reject(err);
         });
-      });
     });
-
-    // return database
-    //   .raw("SELECT * FROM predictions WHERE matchtime=?", [pbody.matchtime]) //match time is manuall only for the trial
-    //   .then(data => data.rows)
-    //   .catch(err => {
-    //     response.status(404).json({ message: "not found" });
-    //   });
+  },
+  savefreetip: pbody => {
+    return new Promise((resolve, reject) => {
+      const fixtures = pbody.fixture;
+      if (fixtures.length === 0) {
+        resolve({
+          status: "DATA_TO_SMALL_TO_PROCESS",
+          message: "You need to provide at least one data",
+          input_data_size: 0,
+          data: []
+        });
+      } else if (fixtures.length <= 5) {
+        var query = `INSERT INTO freetips(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
+        fixtures.forEach(element => {
+          query += `('${pbody.league}','${element.team1}','${element.team2}',
+          '${element.tip}','${
+            element.matchtime
+          }','${new Date().toISOString().slice(0, 10)}'),`;
+        }, query);
+        query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
+        database
+          .raw(query)
+          .then(result => {
+            console.log(result.rows);
+            resolve({
+              status: "DATA_IMPORT_SUCCESS",
+              message: "Successfully created freetips",
+              input_data_size: fixtures.length,
+              data: result.rows
+            });
+          })
+          .catch(err => {
+            reject(err);
+          });
+      } else {
+        resolve({
+          status: "DATA_TO_LARGE_TO_PROCESS",
+          message: "maximum data list number is 5",
+          input_data_size: fixtures.length,
+          data: []
+        });
+      }
+    });
+  },
+  fetchfreetip: () => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM freetips`;
+      database
+        .raw(query)
+        .then(result => {
+          if (result.rows.length === 0) {
+            resolve({
+              message: "THERE_ARE_NO_FREE_TIPS_FOR_TODAY",
+              data: []
+            });
+          } else if (result === null) {
+            resolve({
+              message: "BAD_RESPONSE",
+              data: null
+            });
+          } else {
+            resolve({
+              message: "FETCHED_FREE_TIP",
+              data: result.rows
+            });
+          }
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+  deleteprediction: () => {
+    return new Promise((resolve, reject) => {
+      const query = "delete from predictions";
+      database
+        .raw(query)
+        .then(result => {
+          if (result.rows.length === 0) {
+            resolve({
+              message: "predictions deleted successfully",
+              data: 0
+            });
+          } else {
+            resolve({
+              message: "request not correct",
+              data: "undefined"
+            });
+          }
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 });

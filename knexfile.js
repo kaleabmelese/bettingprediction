@@ -47,8 +47,9 @@ module.exports = {
       // max: process.env.DATABASE_POOL_MAX
     },
     migrations: {
-      // tableName: "users",
-      tablename: "predictions"
+      tableName: "users",
+      tablename: "predictions",
+      tableName: "freetips"
     }
   },
   production: {
