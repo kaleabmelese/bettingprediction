@@ -23,6 +23,24 @@ const stuff = (module.exports = {
       )
       .then(data => data.rows[0]);
   },
+  deleteUser: user => {
+    return new Promise((resolve, reject) => {
+      const query = `DELETE FROM users WHERE username='${user.username}'`;
+      database
+        .raw(query)
+        .then(result => {
+          if (result.rows.length === 0) {
+            resolve({ message: "ADMIN_SIGN_OUT SUCCESS", data: 0 });
+          } else {
+            resolve({ message: "server error", data: "undefined" });
+          }
+        })
+        .catch(err => {
+          reject({ message: "signout error", data: err });
+          // reject(err);
+        });
+    });
+  },
 
   // crypto ships with node - we're leveraging it to create a random, secure token
   createToken: () => {
@@ -81,7 +99,7 @@ const stuff = (module.exports = {
           query += `('${pbody.league}','${element.team1}','${element.team2}',
           '${element.tip}','${
             element.matchtime
-          }','${new Date().toISOString().slice(0, 10)}'),`;
+          }','${new Date().toISOString().slice(0, 9)}'),`;
         }, query);
         query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
         database
@@ -218,6 +236,38 @@ const stuff = (module.exports = {
         .catch(err => {
           reject(err);
         });
+    });
+  },
+  package: pkgbody => {
+    return new Promise((resolve, reject) => {
+      if (pkgbody.pkgtype === 1) {
+        const day = new Date();
+        var today =
+          day.getFullYear() + "-" + (day.getMonth() + 1) + "-" + day.getDate();
+        const query = `SELECT * FROM predictions WHERE matchtime='${today}'`;
+        database
+          .raw(query)
+          .then(result => {
+            if (result.rows.length === 0) {
+              resolve({
+                message: "there are no tips for today",
+                data: result.rows
+              });
+            } else if (result.rows.length <= 50) {
+              resolve({ message: "tips provided", data: result.rows });
+            } else {
+              resolve({
+                message: "data is too large",
+                data: "length" + result.rows.length
+              });
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      } else {
+        resolve({ message: "other pkg type", data: null }); // here is the rest package offer to be done
+      }
     });
   }
 });

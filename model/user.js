@@ -30,11 +30,30 @@ const homepage = (request, response) => {
     })
     .catch(err => {
       console.log(err);
-      // response.status(500).json(JSON.parse(err.message));
+      response.status(500).json(JSON.parse(err.message));
+    });
+};
+
+const buypackage = (request, response) => {
+  const pkgbody = request.body;
+  stuff
+    .package(pkgbody)
+    .then(result => {
+      if (result.data >= 50) {
+        console.log(result);
+        response.status(200).json(result);
+      } else {
+        console.log(result);
+        response.status(200).json(result);
+      }
+    })
+    .catch(err => {
+      console.log(err);
     });
 };
 
 module.exports = {
   getpredictions,
-  homepage
+  homepage,
+  buypackage
 };

@@ -45,15 +45,30 @@ const signin = (request, response) => {
     .catch(err => console.error(err));
 };
 
+const signout = (request, response) => {
+  const userReq = request.body;
+  stuff
+    .findUser(userReq)
+    .then(user => {
+      stuff.deleteUser(user).then(result => {
+        response.status(200).json(result);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      response.status(500).json(JSON.parse(error.message));
+    });
+};
+
 const insertprediction = (request, response) => {
   const pbody = request.body;
   stuff
     .savePrediction(pbody)
     .then(result => {
       if (result.data.length === 0) {
-        response.status(400).json(result);
+        response.status(400).json(result.data);
       } else {
-        response.status(200).json(result);
+        response.status(200).json(result.data);
       }
     })
     .catch(error => {
@@ -94,6 +109,7 @@ const deleteprediction = (reques, response) => {
 module.exports = {
   signin,
   signup,
+  signout,
   insertprediction,
   insertfreetip,
   deleteprediction
