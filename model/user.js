@@ -6,16 +6,15 @@ const crypto = require("crypto"); // built-in encryption node module
 const stuff = require("./stuff");
 
 const getpredictions = (request, response) => {
-  const pbody = request.body;
   stuff
-    .fetchprediction(pbody)
+    .fetchprediction()
     .then(result => {
-      if (result.data.length === 0) {
-        response.status(400).json(result);
-      } else {
-        console.log(result.data);
-        response.status(200).json(result.data);
-      }
+      // if (result.data.length === 0) {
+      response.status(200).json(result.data);
+      // } else {
+      // console.log(result.data);
+      // response.status(200).json(result.data);
+      // }
     })
     .catch(err => {
       console.log(err);

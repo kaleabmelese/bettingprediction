@@ -9,7 +9,7 @@ router.post("/signin", admin.signin);
 router.post("/signout", admin.signout);
 router.post("/saveprediction", admin.insertprediction);
 router.post("/savefreetip", admin.insertfreetip);
-router.delete("/deleteprediction", admin.deleteprediction);
+router.post("/deleteprediction", admin.deleteprediction);
 
 router.get("/", User.homepage);
 router.get("/getprediction", User.getpredictions);

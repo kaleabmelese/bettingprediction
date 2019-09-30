@@ -24,8 +24,9 @@ const stuff = (module.exports = {
       .then(data => data.rows[0]);
   },
   deleteUser: user => {
+    const usr = user;
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM users WHERE username='${user.username}'`;
+      const query = `DELETE FROM users WHERE username='${usr.username}'`;
       database
         .raw(query)
         .then(result => {
@@ -85,59 +86,93 @@ const stuff = (module.exports = {
   },
   savePrediction: pbody => {
     return new Promise((resolve, reject) => {
-      const fixtures = pbody.fixture;
-      if (fixtures.length === 0) {
-        resolve({
-          status: "DATA_TO_SMALL_TO_PROCESS",
-          message: "You need to provide at least one data",
-          input_data_size: 0,
-          data: []
-        });
-      } else if (fixtures.length <= 5) {
-        var query = `INSERT INTO predictions(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
-        fixtures.forEach(element => {
-          query += `('${pbody.league}','${element.team1}','${element.team2}',
-          '${element.tip}','${
-            element.matchtime
-          }','${new Date().toISOString().slice(0, 9)}'),`;
-        }, query);
-        query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
-        database
-          .raw(query)
-          .then(result => {
-            console.log(result.rows);
+      const matchinfo = pbody;
+      const query =
+        "INSERT INTO predictions(league,team1,team2,tip,matchtime,inserted_at) VALUES(?,?,?,?,?,?) RETURNING *";
+      database
+        .raw(query, [
+          matchinfo.league,
+          matchinfo.team1,
+          matchinfo.team2,
+          matchinfo.tip,
+          matchinfo.matchtime,
+          new Date()
+        ])
+        .then(result => {
+          if (result.rows.length === 0) {
+            resolve({ message: "data is not inserted" });
+          } else if (result.rows.length > 1) {
             resolve({
-              status: "DATA_IMPORT_SUCCESS",
-              message: "Successfully created predictions",
-              input_data_size: fixtures.length,
-              data: result.rows
+              message: "data too large to process",
+              data: result.rows.length
             });
-          })
-          .catch(err => {
-            reject(err);
-          });
-      } else {
-        resolve({
-          status: "DATA_TO_LARGE_TO_PROCESS",
-          message: "Split your data into smaller chunks",
-          input_data_size: fixtures.length,
-          data: []
+          } else {
+            resolve({ message: "POST_SUCCESS", data: result.rows });
+          }
         });
-      }
     });
+
+    // return new Promise((resolve, reject) => {
+    //   const fixtures = pbody.fixture;
+    //   if (fixtures.length === 0) {
+    //     resolve({
+    //       status: "DATA_TO_SMALL_TO_PROCESS",
+    //       message: "You need to provide at least one data",
+    //       input_data_size: 0,
+    //       data: []
+    //     });
+    //   } else if (fixtures.length <= 5) {
+    //     var query = `INSERT INTO predictions(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
+    //     fixtures.forEach(element => {
+    //       query += `('${pbody.league}','${element.team1}','${element.team2}',
+    //       '${element.tip}','${
+    //         element.matchtime
+    //       }','${new Date().toISOString().slice(0, 9)}'),`;
+    //     }, query);
+    //     query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
+    //     database
+    //       .raw(query)
+    //       .then(result => {
+    //         console.log(result.rows);
+    //         resolve({
+    //           status: "DATA_IMPORT_SUCCESS",
+    //           message: "Successfully created predictions",
+    //           input_data_size: fixtures.length,
+    //           data: result.rows
+    //         });
+    //       })
+    //       .catch(err => {
+    //         reject(err);
+    //       });
+    //   } else {
+    //     resolve({
+    //       status: "DATA_TO_LARGE_TO_PROCESS",
+    //       message: "Split your data into smaller chunks",
+    //       input_data_size: fixtures.length,
+    //       data: []
+    //     });
+    //   }
+    // });
   },
-  fetchprediction: pbody => {
-    const matchtime = pbody.matchtime;
+  fetchprediction: () => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM predictions WHERE matchtime='${matchtime}'`;
+      const query = `SELECT * FROM predictions`;
       database
         .raw(query)
         .then(result => {
-          resolve({
-            status: "NO_ERROR",
-            message: "Request correct",
-            data: result.rows
-          });
+          if (result.rows.length === 0) {
+            resolve({
+              status: "No error",
+              message: "there are no predictions",
+              data: result.rows.length
+            });
+          } else {
+            resolve({
+              status: "NO_ERROR",
+              message: "Request correct",
+              data: result.rows
+            });
+          }
         })
         .catch(err => {
           reject(err);
@@ -146,45 +181,72 @@ const stuff = (module.exports = {
   },
   savefreetip: pbody => {
     return new Promise((resolve, reject) => {
-      const fixtures = pbody.fixture;
-      if (fixtures.length === 0) {
-        resolve({
-          status: "DATA_TO_SMALL_TO_PROCESS",
-          message: "You need to provide at least one data",
-          input_data_size: 0,
-          data: []
-        });
-      } else if (fixtures.length <= 5) {
-        var query = `INSERT INTO freetips(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
-        fixtures.forEach(element => {
-          query += `('${pbody.league}','${element.team1}','${element.team2}',
-          '${element.tip}','${
-            element.matchtime
-          }','${new Date().toISOString().slice(0, 10)}'),`;
-        }, query);
-        query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
-        database
-          .raw(query)
-          .then(result => {
-            console.log(result.rows);
+      const tipinfo = pbody;
+      const query =
+        "INSERT INTO freetips(league,team1,team2,tip,matchtime,inserted_at) VALUES (?,?,?,?,?,?) RETURNING *";
+      database
+        .raw(query, [
+          tipinfo.league,
+          tipinfo.team1,
+          tipinfo.team2,
+          tipinfo.tip,
+          tipinfo.matchtime,
+          new Date()
+        ])
+        .then(result => {
+          if (result.rows.length === 0) {
             resolve({
-              status: "DATA_IMPORT_SUCCESS",
-              message: "Successfully created freetips",
-              input_data_size: fixtures.length,
+              message: "there are no free tips for today",
+              data: result.rows.length
+            });
+          } else {
+            resolve({
+              message: "tips of the day",
               data: result.rows
             });
-          })
-          .catch(err => {
-            reject(err);
-          });
-      } else {
-        resolve({
-          status: "DATA_TO_LARGE_TO_PROCESS",
-          message: "maximum data list number is 5",
-          input_data_size: fixtures.length,
-          data: []
+          }
+        })
+        .catch(err => {
+          reject(err);
         });
-      }
+      // if (fixtures.length === 0) {
+      //   resolve({
+      //     status: "DATA_TO_SMALL_TO_PROCESS",
+      //     message: "You need to provide at least one data",
+      //     input_data_size: 0,
+      //     data: []
+      //   });
+      // } else if (fixtures.length <= 5) {
+      //   var query = `INSERT INTO freetips(league,team1,team2,tip,matchtime,inserted_at) VALUES`;
+      //   fixtures.forEach(element => {
+      //     query += `('${pbody.league}','${element.team1}','${element.team2}',
+      //     '${element.tip}','${
+      //       element.matchtime
+      //     }','${new Date().toISOString().slice(0, 10)}'),`;
+      //   }, query);
+      //   query = query.substring(0, query.lastIndexOf(",")) + " returning *;";
+      //   database
+      //     .raw(query)
+      //     .then(result => {
+      //       console.log(result.rows);
+      //       resolve({
+      //         status: "DATA_IMPORT_SUCCESS",
+      //         message: "Successfully created freetips",
+      //         input_data_size: fixtures.length,
+      //         data: result.rows
+      //       });
+      //     })
+      //     .catch(err => {
+      //       reject(err);
+      //     });
+      // } else {
+      //   resolve({
+      //     status: "DATA_TO_LARGE_TO_PROCESS",
+      //     message: "maximum data list number is 5",
+      //     input_data_size: fixtures.length,
+      //     data: []
+      //   });
+      // }
     });
   },
   fetchfreetip: () => {
@@ -239,6 +301,7 @@ const stuff = (module.exports = {
     });
   },
   package: pkgbody => {
+    //pkgtype 1=>daily package, 2=>weekly, 3=>monthly, 4=>semi annual and 5=>annual
     return new Promise((resolve, reject) => {
       if (pkgbody.pkgtype === 1) {
         const day = new Date();
@@ -264,6 +327,29 @@ const stuff = (module.exports = {
           })
           .catch(err => {
             reject(err);
+          });
+      } else if (pkgbody.pkgtype === 2) {
+        const day = new Date();
+        const today =
+          day.getFullYear() + "-" + (day.getMonth() + 1) + "-" + day.getDate();
+        const date1 = day.setDate(day.getDate() + 1);
+        const date2 = day.setDate(day.getDate() + 2);
+        const date3 = day.setDate(day.getDate() + 3);
+        const date4 = day.setDate(day.getDate() + 4);
+        const date5 = day.setDate(day.getDate() + 5);
+        const date6 = day.setDate(day.getDate() + 6);
+        const date7 = day.setDate(day.getDate() + 7);
+
+        const query = `SELECT * FROM predictions WHERE matchtime='${today}' OR matchtime='${date1}'
+         OR matchtime='${date2}'OR matchtime='${date3}' OR matchtime='${date4}' OR matchtime='${date5}' OR matchtime='${date6}'`;
+
+        database
+          .raw(query)
+          .then(result => {
+            resolve({ message: "tips of the week", data: result.rows });
+          })
+          .catch(err => {
+            console.log(err);
           });
       } else {
         resolve({ message: "other pkg type", data: null }); // here is the rest package offer to be done

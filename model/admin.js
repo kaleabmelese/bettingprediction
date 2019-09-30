@@ -62,36 +62,42 @@ const signout = (request, response) => {
 
 const insertprediction = (request, response) => {
   const pbody = request.body;
-  stuff
-    .savePrediction(pbody)
-    .then(result => {
-      if (result.data.length === 0) {
-        response.status(400).json(result.data);
-      } else {
-        response.status(200).json(result.data);
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      response.status(500).json(JSON.parse(error.message));
-    });
+  if (!request.body) {
+    console.log({ message: "object missing" });
+  } else {
+    stuff
+      .savePrediction(pbody)
+      .then(result => {
+        // response.status(200).json(result.data);//not needed for the front end
+        response.send("SAVING SUCCESS!");
+        console.log("SAVING SUCCESS!");
+      })
+      .catch(error => {
+        console.log(error);
+        response.status(500).json(JSON.parse(error.message));
+      });
+  }
 };
 
 const insertfreetip = (request, response) => {
   const pbody = request.body;
-  stuff
-    .savefreetip(pbody)
-    .then(result => {
-      if (result.data.length === 0) {
-        response.status(400).json(result);
-      } else {
-        response.status(200).json(result);
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      response.status(500).json(JSON.parse(error.message));
-    });
+  if (!request.body) {
+    console.log({ message: "object missing" });
+  } else {
+    stuff
+      .savefreetip(pbody)
+      .then(result => {
+        if (result.data.length === 0) {
+          response.status(400).json(result.data);
+        } else {
+          response.status(200).json(result.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        response.status(500).json(JSON.parse(error.message));
+      });
+  }
 };
 
 const deleteprediction = (reques, response) => {
