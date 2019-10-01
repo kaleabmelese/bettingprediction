@@ -22,6 +22,7 @@ const getpredictions = (request, response) => {
 };
 
 const homepage = (request, response) => {
+  response.send("kkkkkkkkkkk");
   stuff
     .fetchfreetip()
     .then(result => {
