@@ -24,14 +24,18 @@ const stuff = (module.exports = {
       .then(data => data.rows[0]);
   },
   deleteUser: user => {
-    const usr = user;
+    // const usrname = user;
+    // console.log(usrname.username);
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM users WHERE username='${usr.username}'`;
+      const query = `DELETE FROM users WHERE username='${user.username}'`;
       database
         .raw(query)
         .then(result => {
           if (result.rows.length === 0) {
-            resolve({ message: "ADMIN_SIGN_OUT SUCCESS", data: 0 });
+            resolve({
+              message: "ADMIN_SIGN_OUT SUCCESS",
+              data: result.rows.length
+            });
           } else {
             resolve({ message: "server error", data: "undefined" });
           }
@@ -53,9 +57,19 @@ const stuff = (module.exports = {
   },
 
   findUser: userReq => {
-    return database
-      .raw("SELECT * FROM users WHERE username = ?", [userReq.username])
-      .then(data => data.rows[0]);
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM users WHERE username='${userReq.username}'`;
+      database.raw(query).then(result => {
+        if (result.rows.length === 0) {
+          resolve({ message: "user not found", data: result.rows.length });
+        } else {
+          resolve({ message: "user found", data: result.rows[0] });
+        }
+      });
+    });
+    // return database
+    //   .raw("SELECT * FROM users WHERE username = ?", [userReq.username])
+    //   .then(data => data.rows[0]);
   },
 
   checkPassword: (reqPassword, foundUser) => {
