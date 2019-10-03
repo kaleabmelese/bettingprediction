@@ -22,7 +22,6 @@ const getpredictions = (request, response) => {
 };
 
 const homepage = (request, response) => {
-  response.send("kkkkkkkkkkk");
   stuff
     .fetchfreetip()
     .then(result => {
@@ -41,10 +40,10 @@ const buypackage = (request, response) => {
     .then(result => {
       if (result.data >= 50) {
         console.log(result);
-        response.status(200).json(result);
+        response.status(200).json(result.data);
       } else {
         console.log(result);
-        response.status(200).json(result);
+        response.status(200).json(result.data);
       }
     })
     .catch(err => {

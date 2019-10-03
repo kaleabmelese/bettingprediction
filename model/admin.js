@@ -50,7 +50,8 @@ const signout = (request, response) => {
   stuff
     .findUser(userReq)
     .then(user => {
-      stuff.deleteUser(user).then(result => {
+      const usrname = user.data;
+      stuff.deleteUser(usrname).then(result => {
         response.status(200).json(result);
       });
     })
@@ -70,6 +71,7 @@ const insertprediction = (request, response) => {
       .then(result => {
         // response.status(200).json(result.data);//not needed for the front end
         response.send("SAVING SUCCESS!");
+        console.log(result.data);
         console.log("SAVING SUCCESS!");
       })
       .catch(error => {

@@ -28,12 +28,14 @@ const stuff = (module.exports = {
     // console.log(usrname.username);
     return new Promise((resolve, reject) => {
       const query = `DELETE FROM users WHERE username='${user.username}'`;
+      console.log(user.username);
+      const username = user.username;
       database
         .raw(query)
         .then(result => {
           if (result.rows.length === 0) {
             resolve({
-              message: "ADMIN_SIGN_OUT SUCCESS",
+              message: `USER_${username}_SIGN_OUT SUCCESS`,
               data: result.rows.length
             });
           } else {

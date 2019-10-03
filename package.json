@@ -4,13 +4,19 @@
   "description": "football betting prediction site",
   "main": "main.js",
   "scripts": {
-    "start": "next start -p ${PORT}"
+    "start": "node index.js",
+    "heroku-postbuild": "npm install --production"
+  },
+  "engines": {
+    "node": "8.5.0",
+    "npm": "5.3.0"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "knex": "^0.19.3",
     "nodemon": "^1.19.2",
