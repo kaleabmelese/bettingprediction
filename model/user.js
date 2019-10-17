@@ -1,12 +1,10 @@
-const environment = process.env.NODE_ENV || "development"; // set environment
-const configuration = require("../knexfile")[environment]; // pull in correct db with env configs
-const database = require("knex")(configuration); // define database based on above
-const bcrypt = require("bcrypt"); // bcrypt will encrypt passwords to be saved in db
-const crypto = require("crypto"); // built-in encryption node module
 const stuff = require("./stuff");
+const prediction = require("./predictions")
+const freetip = require("./freetip")
+const package = require("./package")
 
 const getpredictions = (request, response) => {
-  stuff
+  prediction
     .fetchprediction()
     .then(result => {
       // if (result.data.length === 0) {
@@ -22,7 +20,7 @@ const getpredictions = (request, response) => {
 };
 
 const homepage = (request, response) => {
-  stuff
+  freetip
     .fetchfreetip()
     .then(result => {
       response.status(200).json(result.data);
@@ -35,16 +33,10 @@ const homepage = (request, response) => {
 
 const buypackage = (request, response) => {
   const pkgbody = request.body;
-  stuff
-    .package(pkgbody)
+
+  package.buypkg(pkgbodyq)
     .then(result => {
-      if (result.data >= 50) {
-        console.log(result);
-        response.status(200).json(result.data);
-      } else {
-        console.log(result);
-        response.status(200).json(result.data);
-      }
+      response.status(200).json(result.data);
     })
     .catch(err => {
       console.log(err);

@@ -1,5 +1,3 @@
-var express = require("express");
-
 var { Client, Pool } = require("pg");
 const pg_configer = {
   user: "kalpsql",

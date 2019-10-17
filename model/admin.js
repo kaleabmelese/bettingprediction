@@ -1,9 +1,7 @@
-const environment = process.env.NODE_ENV || "development"; // set environment
-const configuration = require("../knexfile")[environment]; // pull in correct db with env configs
-const database = require("knex")(configuration); // define database based on above
-const bcrypt = require("bcrypt"); // bcrypt will encrypt passwords to be saved in db
-const crypto = require("crypto"); // built-in encryption node module
-const stuff = require("./stuff");
+const stuff = require("./stuff")
+const prediction = require("./predictions")
+const freetip = require("./freetip")
+
 
 const signup = (request, response) => {
   const user = request.body;
@@ -30,6 +28,7 @@ const signin = (request, response) => {
   stuff
     .findUser(userReq)
     .then(foundUser => {
+      console.log(foundUser)
       user = foundUser;
       return stuff.checkPassword(userReq.password, foundUser);
     })
@@ -66,13 +65,12 @@ const insertprediction = (request, response) => {
   if (!request.body) {
     console.log({ message: "object missing" });
   } else {
-    stuff
+    prediction
       .savePrediction(pbody)
       .then(result => {
         // response.status(200).json(result.data);//not needed for the front end
         response.send("SAVING SUCCESS!");
         console.log(result.data);
-        console.log("SAVING SUCCESS!");
       })
       .catch(error => {
         console.log(error);
@@ -86,7 +84,7 @@ const insertfreetip = (request, response) => {
   if (!request.body) {
     console.log({ message: "object missing" });
   } else {
-    stuff
+    freetip
       .savefreetip(pbody)
       .then(result => {
         if (result.data.length === 0) {
@@ -103,7 +101,7 @@ const insertfreetip = (request, response) => {
 };
 
 const deleteprediction = (reques, response) => {
-  stuff
+  prediction
     .deleteprediction()
     .then(result => {
       response.status(200).json(result);
