@@ -16,7 +16,7 @@ const stuff = (module.exports = {
 
   createUser: user => {
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO users (username, password_digest, token, created_at) VALUES (?, ?, ?, ?) RETURNING id, username, created_at, token";
+      const query = "INSERT INTO users (username, password_digest, token, created_at) VALUES (?, ?, ?, ?) RETURNING username, created_at, token";
       const arr = [user.username, user.password_digest, user.token, new Date()]
       dbexec.dataquery(query, arr).then(data => {
         resolve(data[0])
@@ -69,7 +69,7 @@ const stuff = (module.exports = {
   },
 
   checkPassword: (reqPassword, foundUser) => {
-    return new Promise((resolve, reject) =>
+    return new Promise((resolve, reject) => {
       bcrypt.compare(
         reqPassword,
         foundUser.password_digest,
@@ -84,7 +84,7 @@ const stuff = (module.exports = {
           }
         }
       )
-    );
+    });
   },
 
   updateUserToken: (token, user) => {

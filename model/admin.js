@@ -16,7 +16,7 @@ const signup = (request, response) => {
     .then(() => stuff.createUser(user))
     .then(user => {
       delete user.password_digest;
-      response.status(201).json({ user });
+      response.status(201).json(user);
     })
     .catch(err => console.error(err));
 };
@@ -28,7 +28,7 @@ const signin = (request, response) => {
   stuff
     .findUser(userReq)
     .then(foundUser => {
-      console.log(foundUser)
+      foundUser = foundUser.data
       user = foundUser;
       return stuff.checkPassword(userReq.password, foundUser);
     })
