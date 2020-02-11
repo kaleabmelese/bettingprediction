@@ -5,8 +5,8 @@ module.exports = {
     client: "postgresql",
     connection: {
       host: "localhost",
-      user: "kalpsql",
-      password: "kalpsql",
+      user: "kaleab",
+      password: "pgpasskal",
       database: "bettbase"
     },
     migrations: {
@@ -21,8 +21,8 @@ module.exports = {
     client: "pg",
     connection: {
       host: "localhost",
-      user: "kalpsql",
-      password: "kalpsql",
+      user: "kaleab",
+      password: "pgpasskal",
       database: "bettbase"
     },
     migrations: {
@@ -37,8 +37,8 @@ module.exports = {
     client: "postgresql",
     connection: {
       database: "bettbase",
-      user: "kalpsql",
-      password: "kalpsql"
+      user: "kaleab",
+      password: "pgpasskal"
     },
     pool: {
       min: 2,

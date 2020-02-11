@@ -5,6 +5,7 @@ const freetip = require("./freetip")
 
 const signup = (request, response) => {
   const user = request.body;
+  console.log(user)
   stuff
     .hashPassword(user.password)
     .then(hashedPassword => {
