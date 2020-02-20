@@ -3,12 +3,7 @@
 module.exports = {
   development: {
     client: "postgresql",
-    connection: {
-      host: "localhost",
-      user: "kaleab",
-      password: "pgpasskal",
-      database: "bettbase"
-    },
+    connection: process.env.DATABASE_URL,
     migrations: {
       directory: "./knex/migrations"
     },
