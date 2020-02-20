@@ -5,8 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node index.js",
-    "heroku-postbuild": "npm install --production",
-    "migrate": "knex --connection=$DATABASE_URL migrate:latest"
+    "heroku-postbuild": "npm install --production"
 
   },
   "engines": {
