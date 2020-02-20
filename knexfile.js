@@ -54,11 +54,7 @@ module.exports = {
   },
   production: {
     client: "postgresql",
-    connection: {
-      database: "bettbase",
-      user: "kaleab",
-      password: "pgpasskal"
-    },
+    connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
       max: 10
