@@ -13,5 +13,5 @@ app.use("/api/app", psys);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log(`server running at ${port}`);
+  console.log(`server running at ${port}`, '\n DATABASE_URL: ', process.env.DATABASE_URL);
 });
