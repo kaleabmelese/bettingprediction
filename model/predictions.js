@@ -4,6 +4,7 @@ const prediction = (module.exports) = {
     savePrediction: pbody => {
         return new Promise((resolve, reject) => {
             const matchinfo = pbody;
+            // const matchtime='10-2-201'
             const query = "INSERT INTO predictions(league,team1,team2,tip,matchtime,inserted_at) VALUES(?,?,?,?,?,?) RETURNING *";
             const arr = [matchinfo.league, matchinfo.team1, matchinfo.team2, matchinfo.tip, matchinfo.matchtime, new Date()]
 
